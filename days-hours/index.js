@@ -118,7 +118,20 @@ scheduleHtml += `
                 const time = moment(timeSlotEl.getAttribute('data-time'), 'HH:mm');
                 const dateTime = moment({ year: date.year(), month: date.month(), date: date.date(), hour: time.hour(), minute: time.minute() });
                 console.log(`Selected date and time slot: ${dateTime.format('MMMM D, YYYY h:mm A')}`);
-              });
+                
+            
+                const dateTimeslot1 = dateTime.valueOf();
+                console.log(`Datetime1 and time in UTC format in milliseconds: ${dateTimeslot1}`);
+
+                const utcMoment = moment.utc(dateTimeslot1);
+               
+                const localMoment = utcMoment.local();
+                const formattedDateTime = localMoment.format('MMMM D, YYYY h:mm A');
+                
+                // Log the result to the console
+                console.log(`Formatted date and time: ${formattedDateTime}`);
+
+            });
             });
           }
         });
