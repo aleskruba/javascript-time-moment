@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Calendar Example</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  </head>
+  <body>
+    <div id="calendar-container"></div>
+
+    <script src="index.js"></script>
+    <script>
+      const calendarContainer = document.querySelector('#calendar-container');
+      const myCalendar = calendar(calendarContainer);
+
+      calendarContainer.addEventListener('dateSelected', (event) => {
+        console.log(event.detail);
+      });
+    </script>
+  </body>
+</html>
