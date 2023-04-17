@@ -79,45 +79,59 @@ const calendar = (containerEl) => {
       
             // Create a string with 24 time slots for the schedule
          // Create a string with 24 time slots for the schedule
-let scheduleHtml = '<div class="schedule-header">Select a time slot:</div>';
-let amScheduleHtml = '';
-let pmScheduleHtml = '';
-for (let i = 0; i < 24; i++) {
-  const timeSlot = moment({ hour: i });
-  const isPast = timeSlot.isBefore(moment(), 'hour');
-  const isSelected = false; // You could add logic to check if this time slot is currently selected
-  const timeSlotHtml = `
-    <div class="schedule-time-slot${isSelected ? ' schedule-time-slot-selected' : ''}${isPast ? ' schedule-time-slot-past' : ''}"
-      data-date="${date.format('YYYY-MM-DD')}" data-time="${timeSlot.format('HH:mm')}">
-      ${timeSlot.format('h A')}
-    </div>
-  `;
-  if (i < 12) {
-    amScheduleHtml += timeSlotHtml;
-  } else {
-    pmScheduleHtml += timeSlotHtml;
-  }
-}
-
-// Set the inner HTML of the new container to the schedule HTML
-scheduleHtml += `
-  <div class="schedule-columns">
-    <div class="schedule-column">${amScheduleHtml}</div>
-    <div class="schedule-column">${pmScheduleHtml}</div>
-  </div>
-`;
-
+         let scheduleHtml = '<div class="schedule-header">Select a time slot:</div>';
+         let amScheduleHtml = '';
+         let pmScheduleHtml = '';
+         for (let i = 0; i < 24; i++) {
+           const timeSlotStart = moment({ hour: i });
+           const timeSlotEnd = moment({ hour: i + 1 });
+           const isPast = timeSlotStart.isBefore(moment(), 'hour');
+           const isSelected = false; // You could add logic to check if this time slot is currently selected
+           const timeSlotHtml = `
+             <div class="schedule-time-slot${isSelected ? ' schedule-time-slot-selected' : ''}${isPast ? ' schedule-time-slot-past' : ''}"
+               data-date="${date.format('YYYY-MM-DD')}" data-time="${timeSlotStart.format('HH:mm')}">
+               ${timeSlotStart.format('h A')} - ${timeSlotEnd.format('h A')}
+             </div>
+           `;
+           if (i < 12) {
+             amScheduleHtml += timeSlotHtml;
+           } else {
+             pmScheduleHtml += timeSlotHtml;
+           }
+         }
+         
+         // Set the inner HTML of the new container to the schedule HTML
+         scheduleHtml += `
+           <div class="schedule-columns">
+             <div class="schedule-column1">${amScheduleHtml}</div>
+             <div class="schedule-column2">${pmScheduleHtml}</div>
+           </div>
+         `;
+         
       
             // Set the inner HTML of the new container to the schedule HTML
             scheduleContainer.innerHTML = scheduleHtml;
-      
+          
+
             // Add click event listeners to each time slot
             scheduleContainer.querySelectorAll('.schedule-time-slot').forEach((timeSlotEl) => {
               timeSlotEl.addEventListener('click', () => {
+
+                const selectedTimeSlotEl = scheduleContainer.querySelector('.schedule-time-slot-selected');
+                if (selectedTimeSlotEl) {
+                  selectedTimeSlotEl.classList.remove('schedule-time-slot-selected');
+                }
+                timeSlotEl.classList.add('schedule-time-slot-selected');
+
+
                 const date = moment(timeSlotEl.getAttribute('data-date'));
                 const time = moment(timeSlotEl.getAttribute('data-time'), 'HH:mm');
                 const dateTime = moment({ year: date.year(), month: date.month(), date: date.date(), hour: time.hour(), minute: time.minute() });
-                console.log(`Selected date and time slot: ${dateTime.format('MMMM D, YYYY h:mm A')}`);
+                const dateTimePlusOneHour = dateTime.clone().add(1, 'hour');
+                const formattedDateTimeOneHour = dateTimePlusOneHour.local().format('MMMM D, YYYY h:mm A');
+
+              
+                console.log(`Selected date and time slot: ${dateTime.format('MMMM D, YYYY h:mm A')} -${formattedDateTimeOneHour} `);
                 
             
                 const dateTimeslot1 = dateTime.valueOf();
@@ -157,3 +171,4 @@ scheduleHtml += `
     getSelectedDate: () => selectedDate,
   };
 };
+
